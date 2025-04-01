@@ -1,3 +1,4 @@
+import React, { useState, useEffect, memo } from "react";
 import {
   View,
   Text,
@@ -7,18 +8,26 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
-import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/Colors";
 import { ProductType } from "../types/type";
+import { useRouter } from "expo-router";
+import { useCart } from "../app/CartContext";
 
 const { width } = Dimensions.get("window");
 const cardWidth = width / 2 - 30;
 
-const ProductItems = ({ item }: { item: ProductType }) => {
+const ProductItems = memo(({ item }: { item: ProductType }) => {
+  const router = useRouter();
   const [liked, setLiked] = useState(false);
   const scaleValue = new Animated.Value(1);
+  const { addToCart, addToLiked, removeFromLiked, likedItems } = useCart();
+
+  useEffect(() => {
+    const isLiked = likedItems.some((likedItem) => likedItem.id === item.id);
+    setLiked(isLiked);
+  }, [likedItems, item.id]);
 
   const toggleLike = () => {
     Animated.sequence([
@@ -34,7 +43,28 @@ const ProductItems = ({ item }: { item: ProductType }) => {
       }),
     ]).start();
 
+    if (liked) {
+      removeFromLiked(item.id);
+    } else {
+      addToLiked({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        image: item.images[0],
+        quantity: 1,
+      });
+    }
     setLiked(!liked);
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      image: item.images[0],
+      quantity: 1,
+    });
   };
 
   return (
@@ -70,10 +100,16 @@ const ProductItems = ({ item }: { item: ProductType }) => {
             <Text style={styles.ratingtxt}>4.7</Text>
           </View>
         </View>
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={handleAddToCart}
+        >
+          <Text style={styles.addToCartText}>Add to Cart</Text>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );
-};
+});
 
 export default ProductItems;
 
@@ -142,5 +178,17 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.gray,
     marginLeft: 5,
+  },
+  addToCartButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginTop: 10,
+    alignItems: "center",
+  },
+  addToCartText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

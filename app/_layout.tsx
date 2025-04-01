@@ -1,12 +1,14 @@
-import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { CartProvider } from "../app/CartContext";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
+import { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+const Tab = createBottomTabNavigator();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -25,11 +27,20 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="signin" options={{ presentation: "modal" }} />
-        <Stack.Screen name="signup" options={{ presentation: "modal" }} />
-      </Stack>
+      <NavigationContainer>
+        <CartProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="signin" options={{ presentation: "modal" }} />
+            <Stack.Screen name="signup" options={{ presentation: "modal" }} />
+            <Stack.Screen
+              name="LikeProduct"
+              options={{ presentation: "modal" }}
+            />
+          </Stack>
+        </CartProvider>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }

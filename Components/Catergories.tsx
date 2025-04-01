@@ -1,36 +1,37 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  FlatList,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import React from "react";
 import { CategoryType } from "@/types/type";
+import { FlatList } from "react-native-gesture-handler";
+import { Colors } from "@/constants/Colors";
 
 type Props = { categories: CategoryType[] };
 
-const Categories = ({ categories }: Props) => {
+const Catergories = (catorgories: Props) => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>CATEGORIES</Text>
-        <TouchableOpacity activeOpacity={0.6}>
-          <Text style={styles.seeAll}>SEE ALL</Text>
+      <View
+        style={{
+          flexDirection: "row",
+
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <Text style={styles.title}>Catorgories</Text>
+        <TouchableOpacity>
+          <Text>See All</Text>
         </TouchableOpacity>
       </View>
 
       <FlatList
-        data={categories}
+        data={catorgories.categories}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.categoryItem} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.categoryItem}>
             <Image source={{ uri: item.image }} style={styles.image} />
-            <Text style={styles.categoryName}>{item.name.toUpperCase()}</Text>
+            <Text>{item.name}</Text>
           </TouchableOpacity>
         )}
       />
@@ -38,64 +39,46 @@ const Categories = ({ categories }: Props) => {
   );
 };
 
-export default Categories;
+export default Catergories;
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 10,
-    marginTop: 15,
-    backgroundColor: "#111",
-    padding: 15,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 15,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.black,
+  },
+  seeAllText: {
+    fontSize: 14,
+    color: Colors.primary,
   },
   seeAll: {
     fontSize: 14,
-    color: "#FF3D00",
-    fontWeight: "800",
+    color: Colors.primary,
   },
-  listContainer: {
-    paddingVertical: 10,
-  },
-  categoryItem: {
-    alignItems: "center",
-    marginRight: 15,
-    backgroundColor: "#222",
-    borderRadius: 12,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+  columnWrapper: {
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    marginBottom: 8,
   },
   image: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginBottom: 8,
-    borderWidth: 2,
-    borderColor: "#FF3D00",
+    width: 55,
+    height: 55,
+    borderRadius: 30,
   },
-  categoryName: {
-    fontSize: 15,
-    fontWeight: "900",
-    color: "#FFF",
+  categoryItem: {
+    marginVertical: 12,
+    gap: 12,
+    alignItems: "center",
+    marginLeft: 12,
   },
 });

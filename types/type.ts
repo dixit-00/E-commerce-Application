@@ -5,6 +5,8 @@ export interface ProductType {
   description: string;
   images: string[];
   category: Category;
+  discount?: number; // Optional property for discount percentage
+  isNew?: boolean;
 }
 
 interface Category {

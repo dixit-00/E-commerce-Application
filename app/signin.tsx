@@ -1,15 +1,44 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import InputField from "@/Components/InputField";
 import SocialLoginButton from "@/Components/socialLoginButton";
 import { Stack } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
 type Props = {};
 
 const SignInScreen = (props: Props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    const userData = {
+      name: email.split('@')[0], // Use part of email as name
+      email: email,
+      avatar: `https://avatar.iran.liara.run/public/${email}`,
+      lastLogin: new Date().toISOString(),
+    };
+
+    try {
+      await AsyncStorage.setItem("userData", JSON.stringify(userData));
+      await AsyncStorage.setItem("userToken", "dummy-token");
+      await AsyncStorage.setItem("authState", "authenticated");
+      router.replace("/(tabs)");
+    } catch (error) {
+      console.error("Failed to save user data:", error);
+      Alert.alert("Error", "Failed to login. Please try again.");
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -23,24 +52,25 @@ const SignInScreen = (props: Props) => {
         }}
       />
       <View style={styles.container}>
-        <Text style={styles.title}>Create an Account</Text>
+        <Text style={styles.title}>Welcome Back</Text>
         <InputField
           placeholder="Email Address"
           placeholderTextColor={Colors.gray}
           autoCapitalize="none"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
         <InputField
           placeholder="Password"
           placeholderTextColor={Colors.gray}
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity
           style={styles.bnt}
-          onPress={() => {
-            router.dismissAll();
-            router.push("/(tabs)");
-          }}
+          onPress={handleLogin}
         >
           <Text style={styles.txtbnt}>Login</Text>
         </TouchableOpacity>
